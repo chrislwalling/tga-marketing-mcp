@@ -59,6 +59,9 @@ const handler = createMcpHandler((server) => {
       return { content: [{ type: "text", text: JSON.stringify(report, null, 2) }] };
     }
   );
+}, {}, {
+  basePath: "/api",
+  maxDuration: 60,
 });
 
 export { handler as GET, handler as POST, handler as DELETE };
