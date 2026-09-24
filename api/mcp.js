@@ -2,6 +2,7 @@ import { createMcpHandler } from "@vercel/mcp-adapter";
 import { z } from "zod";
 import { querySearchConsole, listSitemaps } from "../lib/gsc.js";
 import { runGa4Report, getBookingConfirmedCount } from "../lib/ga4.js";
+import { getConversions, getCampaignPerformance, getSearchTerms } from "../lib/ads.js";
 
 const handler = createMcpHandler((server) => {
   server.tool(
@@ -57,6 +58,46 @@ const handler = createMcpHandler((server) => {
     async ({ startDate, endDate }) => {
       const report = await getBookingConfirmedCount({ startDate, endDate });
       return { content: [{ type: "text", text: JSON.stringify(report, null, 2) }] };
+    }
+  );
+
+  server.tool(
+    "ads_conversions",
+    "Get Google Ads conversion counts and values (e.g. Book appointment / booking_confirmed) for The Grill Authority's account over a date range, broken out by conversion action and day.",
+    {
+      startDate: z.string().describe("YYYY-MM-DD"),
+      endDate: z.string().describe("YYYY-MM-DD"),
+    },
+    async ({ startDate, endDate }) => {
+      const rows = await getConversions({ startDate, endDate });
+      return { content: [{ type: "text", text: JSON.stringify(rows, null, 2) }] };
+    }
+  );
+
+  server.tool(
+    "ads_campaign_performance",
+    "Get Google Ads campaign-level performance (impressions, clicks, cost, conversions) for The Grill Authority's account over a date range.",
+    {
+      startDate: z.string().describe("YYYY-MM-DD"),
+      endDate: z.string().describe("YYYY-MM-DD"),
+    },
+    async ({ startDate, endDate }) => {
+      const rows = await getCampaignPerformance({ startDate, endDate });
+      return { content: [{ type: "text", text: JSON.stringify(rows, null, 2) }] };
+    }
+  );
+
+  server.tool(
+    "ads_search_terms",
+    "Get the actual search terms that triggered Google Ads for The Grill Authority over a date range, ranked by clicks. Useful for finding negative keywords and understanding real search intent.",
+    {
+      startDate: z.string().describe("YYYY-MM-DD"),
+      endDate: z.string().describe("YYYY-MM-DD"),
+      limit: z.number().optional().describe("Defaults to 50"),
+    },
+    async ({ startDate, endDate, limit }) => {
+      const rows = await getSearchTerms({ startDate, endDate, limit });
+      return { content: [{ type: "text", text: JSON.stringify(rows, null, 2) }] };
     }
   );
 }, {}, {
