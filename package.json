@@ -1,0 +1,17 @@
+{
+  "name": "tga-marketing-mcp",
+  "version": "0.1.0",
+  "private": true,
+  "description": "MCP server exposing GA4, Search Console (and later Google Ads) data for The Grill Authority to Claude.",
+  "type": "module",
+  "scripts": {
+    "dev": "vercel dev"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "@vercel/mcp-adapter": "^0.6.0",
+    "google-auth-library": "^9.14.1",
+    "googleapis": "^140.0.1",
+    "zod": "^3.23.8"
+  }
+}
